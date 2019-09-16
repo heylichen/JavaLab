@@ -39,6 +39,22 @@ public class BruteForceCoding {
         return new BruteForceCoding(result);
     }
 
+    public static final int encodeIntBigEndian(byte[] dest, long value, int offset, int size) {
+        for (int i = 0; i < size; i++) {
+            dest[i] = (byte) (value >> ((size - 1) * Byte.SIZE));
+        }
+        return offset;
+    }
+
+    public static final long decodeIntBigEndian(byte[] dest, int offset, int size) {
+        int end = offset + size;
+        long value = 0l;
+        for (int i = offset; i < end; i++) {
+            value = value << Byte.SIZE | ((long) dest[i] & BYTE_MASK);
+        }
+        return value;
+    }
+
     public String lines() {
         return bytesView.asLines(byteStringList);
     }
@@ -51,5 +67,11 @@ public class BruteForceCoding {
         byte[] bytes = new byte[]{0x0F, 127, -128, -127};
         System.out.println(BruteForceCoding.asDecimal(bytes).lines());
         System.out.println(BruteForceCoding.asHex(bytes).lines());
+
+        long a = 65535;
+        byte[] aBytes = new byte[2];
+        encodeIntBigEndian(aBytes, a, 6, 2);
+        long aResult = decodeIntBigEndian(aBytes, 0, 2);
+        System.out.println(aResult);
     }
 }
