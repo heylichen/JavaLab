@@ -15,13 +15,13 @@ public class CopyByChannel {
              WritableByteChannel wc = Channels.newChannel(System.out)) {
             ByteBuffer buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
 
-            while (rc.read(buffer) != -1) {
+            while (rc.read(buffer) != -1) {//one read may not be enough
                 buffer.flip();
                 wc.write(buffer);
                 buffer.compact();
             }
             buffer.flip();
-            while (buffer.hasRemaining()) {
+            while (buffer.hasRemaining()) {//one write may not be enough
                 wc.write(buffer);
             }
             buffer.clear();
