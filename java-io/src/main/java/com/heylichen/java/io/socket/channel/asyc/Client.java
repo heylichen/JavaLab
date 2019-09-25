@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 public class Client {
     public static final String MSG = "Hello";
+
     public static void main(String[] args) throws IOException, InterruptedException {
         AsynchronousSocketChannel clientChannel = AsynchronousSocketChannel.open();
         try {
@@ -36,19 +37,24 @@ public class Client {
         attachment.setClientChannel(clientChannel);
 
         clientChannel.write(buffer, attachment, new ReadWriteHandler());
-        Thread.sleep(2000);
+        Thread.sleep(20000);
     }
 
     private static class ReadWriteHandler implements CompletionHandler<Integer, Attachment> {
         @Override
         public void completed(Integer result, Attachment attachment) {
+            ByteBuffer buffer = attachment.buffer;
+            AsynchronousSocketChannel clientChannel = attachment.clientChannel;
             if (attachment.isRead()) {
-                ByteBuffer buffer = attachment.buffer;
+                buffer.flip();
                 String readMsg = BufferIntrospector.toString(buffer);
-
+                log.info("client read msg:{}",readMsg);
 
             } else {
-
+                buffer.clear();//TODO case when buffer not all written
+                attachment.setRead(true);
+                clientChannel.read(buffer, attachment, this);
+                log.info("client msg write");
             }
         }
 

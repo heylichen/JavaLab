@@ -21,6 +21,6 @@ public class Server {
         attachment.setServerChannel(asyncServerChannel);
         asyncServerChannel.accept(attachment, new AcceptHandler());
 
-        Thread.sleep(2000);
+        Thread.sleep(20000);
     }
 }
